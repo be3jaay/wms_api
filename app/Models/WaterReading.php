@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Parameter extends Model
+class WaterReading extends Model
 {
     use HasFactory;
 
@@ -14,4 +14,10 @@ class Parameter extends Model
         'dissolved_oxygen',
         'ph_level',
     ];
-};
+
+    protected $casts = [
+        'water_temperature' => 'float',
+        'dissolved_oxygen' => 'float',
+        'ph_level' => 'float',
+    ];
+}
