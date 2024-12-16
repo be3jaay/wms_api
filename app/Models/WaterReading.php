@@ -20,4 +20,9 @@ class WaterReading extends Model
         'dissolved_oxygen' => 'float',
         'ph_level' => 'float',
     ];
+
+    public function anomalies()
+    {
+        return $this->hasMany(Anomalies::class);
+    }
 }
