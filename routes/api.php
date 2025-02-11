@@ -20,7 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/v1/base-content/mutate-water-readings', [WaterReadingController::class, 'store']);
+Route::post('/base-content/mutate-water-readings', [WaterReadingController::class, 'store']);
 
 Route::get('/v1/base-content/get-all-water-readings', [WaterReadingController::class, 'index']);
 
@@ -43,3 +43,6 @@ Route::delete('/v1/base-content/delete-anomaly/{id}', [AnomalyController::class,
 Route::delete('/v1/base-content/delete-daily-anomaly', [AnomalyController::class, 'deleteDailyAnomaly']);
 
 Route::get('/v1/base-content/show-anomalies', [AnomalyController::class, 'showAnomalies']);
+
+
+//192.168.227.180

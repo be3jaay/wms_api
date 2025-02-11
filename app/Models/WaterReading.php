@@ -14,7 +14,7 @@ class WaterReading extends Model
         'dissolved_oxygen',
         'ph_level',
     ];
-
+    public $timestamps = false;
     protected $casts = [
         'water_temperature' => 'float',
         'dissolved_oxygen' => 'float',

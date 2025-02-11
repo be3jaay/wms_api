@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\WaterParameter;  // Use WaterParameter model instead of WaterReading
+
 
 class Anomalies extends Model
 {
@@ -13,6 +15,6 @@ class Anomalies extends Model
 
     public function waterReading()
     {
-        return $this->belongsTo(WaterReading::class);
+        return $this->belongsTo(WaterParameter::class);
     }
 }
