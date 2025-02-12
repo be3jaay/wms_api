@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Anomalies;
-use Illuminate\Http\Request;
 
 class AnomalyController extends Controller
 {
     public function showAnomalyNotifications()
     {
-        $data = Anomalies::where('created_at', '>=', now()->subDay())->get();
+        $data = Anomalies::with('waterParameter')->where('created_at', '>=', now()->subDay())->get();
         return response()->json($data, 200);
     }
 
@@ -32,7 +31,7 @@ class AnomalyController extends Controller
 
     public function deleteDailyAnomaly()
     {
-        $data = Anomalies::whereDate('created_at', date('Y-m-d'))->delete();
+       Anomalies::whereDate('created_at', date('Y-m-d'))->delete();
         return response()->json([
             'message' => 'Daily anomalies deleted successfully'
         ], 200);
@@ -40,7 +39,7 @@ class AnomalyController extends Controller
 
     public function showAnomalies()
     {
-        $data = Anomalies::orderBy('created_at', 'desc')->get();
+        $data = Anomalies::with('waterParameter')->orderBy('created_at', 'desc')->get();
         return response()->json($data, 200);
     }
 

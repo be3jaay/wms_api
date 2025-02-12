@@ -61,7 +61,6 @@ class WaterReadingController extends Controller
         }
     
         // Format created_at as UTC ISO 8601 with microseconds and Z
-        $data->created_at = Carbon::parse($data->created_at)->format('Y-m-d\TH:i:s.u\Z');
     
         return response()->json($data);
     }
@@ -76,9 +75,9 @@ class WaterReadingController extends Controller
     
         // Store the validated data in the WaterParameter model
         $waterParameter = WaterParameter::create([
-            'dissolved_oxygen' => $validatedData['do'],
-            'ph_level' => $validatedData['ph'],
-            'water_temperature' => $validatedData['temp'],
+            'do' => $validatedData['do'],
+            'ph' => $validatedData['ph'],
+            'temp' => $validatedData['temp'],
         ]);
     
         // Detect anomalies (if applicable)
@@ -92,72 +91,72 @@ class WaterReadingController extends Controller
     }
 
     private function detectAnomalies(WaterParameter $parameter)
-    {
-        $messages = [
-            'water_temperature' => [
-                'high' => 'Water temperature is too high. Check cooling systems.',
-                'low' => 'Water temperature is too low. Consider heating measures.',
-            ],
-            'dissolved_oxygen' => [
-                'high' => 'Dissolved oxygen is too high. Investigate potential over-aeration.',
-                'low' => 'Dissolved oxygen is too low. Check aerators or oxygen levels.',
-            ],
-            'ph_level' => [
-                'high' => 'pH level is too high. Adjust with appropriate chemicals.',
-                'low' => 'pH level is too low. Neutralize with a suitable base.',
-            ],
+{
+    $messages = [
+        'temp' => [
+            'high' => 'Water temperature is too high. Check cooling systems.',
+            'low' => 'Water temperature is too low. Consider heating measures.',
+        ],
+        'do' => [
+            'high' => 'Dissolved oxygen is too high. Investigate potential over-aeration.',
+            'low' => 'Dissolved oxygen is too low. Check aerators or oxygen levels.',
+        ],
+        'ph' => [
+            'high' => 'pH level is too high. Adjust with appropriate chemicals.',
+            'low' => 'pH level is too low. Neutralize with a suitable base.',
+        ],
+    ];
+
+    $anomalies = [];
+
+    // Example thresholds for anomaly detection
+    if ($parameter->temp > 28) {
+        $anomalies[] = [
+            'type' => 'temp',
+            'value' => $parameter->temp,
+            'suggestion' => $messages['temp']['high'],
         ];
-
-        $anomalies = [];
-
-        // Example thresholds for anomaly detection
-        if ($parameter->water_temperature > 28) {
-            $anomalies[] = [
-                'type' => 'water_temperature',
-                'value' => $parameter->water_temperature,
-                'suggestion' => $messages['water_temperature']['high'],
-            ];
-        } elseif ($parameter->water_temperature < 22) {
-            $anomalies[] = [
-                'type' => 'water_temperature',
-                'value' => $parameter->water_temperature,
-                'suggestion' => $messages['water_temperature']['low'],
-            ];
-        }
-
-        if ($parameter->dissolved_oxygen < 6) {
-            $anomalies[] = [
-                'type' => 'dissolved_oxygen',
-                'value' => $parameter->dissolved_oxygen,
-                'suggestion' => $messages['dissolved_oxygen']['low'],
-            ];
-        } elseif ($parameter->dissolved_oxygen > 9) {
-            $anomalies[] = [
-                'type' => 'dissolved_oxygen',
-                'value' => $parameter->dissolved_oxygen,
-                'suggestion' => $messages['dissolved_oxygen']['high'],
-            ];
-        }
-
-        if ($parameter->ph_level > 8.5) {
-            $anomalies[] = [
-                'type' => 'ph_level',
-                'value' => $parameter->ph_level,
-                'suggestion' => $messages['ph_level']['high'],
-            ];
-        } elseif ($parameter->ph_level < 6.5) {
-            $anomalies[] = [
-                'type' => 'ph_level',
-                'value' => $parameter->ph_level,
-                'suggestion' => $messages['ph_level']['low'],
-            ];
-        }
-
-        // Save the anomalies to the database
-        foreach ($anomalies as $anomaly) {
-            Anomalies::create(array_merge($anomaly, ['water_parameter_id' => $parameter->id]));
-        }
+    } elseif ($parameter->temp < 22) {
+        $anomalies[] = [
+            'type' => 'temp',
+            'value' => $parameter->temp,
+            'suggestion' => $messages['temp']['low'],
+        ];
     }
+
+    if ($parameter->do < 6) {
+        $anomalies[] = [
+            'type' => 'do',
+            'value' => $parameter->do,
+            'suggestion' => $messages['do']['low'],
+        ];
+    } elseif ($parameter->do > 9) {
+        $anomalies[] = [
+            'type' => 'do',
+            'value' => $parameter->do,
+            'suggestion' => $messages['do']['high'],
+        ];
+    }
+
+    if ($parameter->ph > 8.5) {
+        $anomalies[] = [
+            'type' => 'ph',
+            'value' => $parameter->ph,
+            'suggestion' => $messages['ph']['high'],
+        ];
+    } elseif ($parameter->ph < 6.5) {
+        $anomalies[] = [
+            'type' => 'ph',
+            'value' => $parameter->ph,
+            'suggestion' => $messages['ph']['low'],
+        ];
+    }
+
+    // Save the anomalies to the database
+    foreach ($anomalies as $anomaly) {
+        Anomalies::create(array_merge($anomaly, ['water_parameter_id' => $parameter->id]));
+    }
+}
 
     // Additional methods for specific time range filters
     public function showReadingPerDay()

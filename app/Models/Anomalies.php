@@ -4,16 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\WaterParameter;  // Use WaterParameter model instead of WaterReading
-
+use App\Models\WaterParameter;
 
 class Anomalies extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['water_reading_id', 'type', 'value', 'suggestion'];
+    protected $fillable = ['water_parameter_id', 'type', 'value', 'suggestion'];
 
-    public function waterReading()
+    public function waterParameter()
     {
         return $this->belongsTo(WaterParameter::class);
     }

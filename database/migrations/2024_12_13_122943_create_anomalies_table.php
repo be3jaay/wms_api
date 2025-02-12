@@ -6,15 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up()
     {
         if (!Schema::hasTable('anomalies')) {
             Schema::create('anomalies', function (Blueprint $table) {
                 $table->id();
-                $table->foreignId('water_parameter_id')->constrained();
+                $table->foreignId('water_parameter_id')->constrained('water_parameters');
                 $table->string('type');
                 $table->double('value', 8, 2);
                 $table->text('suggestion');
@@ -22,11 +19,7 @@ return new class extends Migration
             });
         }
     }
-    
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('anomalies');
